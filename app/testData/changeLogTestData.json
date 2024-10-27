@@ -1,0 +1,86 @@
+{
+  "items": [
+    {
+      "id": "cl_1",
+      "date": "2024-10-25T00:00:00Z",
+      "version": "v2.1.0",
+      "changes": [
+        {
+          "category": "Features",
+          "items": [
+            "Added new dark mode support across all dashboard components",
+            "Implemented real-time collaboration features in document editor",
+            "Introduced customizable keyboard shortcuts"
+          ]
+        },
+        {
+          "category": "Bug Fixes",
+          "items": [
+            "Fixed memory leak in WebSocket connection handler",
+            "Resolved issue with date picker in Safari browsers",
+            "Corrected timezone handling for international users"
+          ]
+        },
+        {
+          "category": "Performance",
+          "items": [
+            "Optimized image loading with new lazy loading strategy",
+            "Reduced initial bundle size by 35%"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cl_2",
+      "date": "2024-10-18T00:00:00Z",
+      "version": "v2.0.1",
+      "changes": [
+        {
+          "category": "Security",
+          "items": [
+            "Updated dependencies to address potential security vulnerabilities",
+            "Enhanced password hashing algorithm"
+          ]
+        },
+        {
+          "category": "Bug Fixes",
+          "items": [
+            "Fixed crash when handling malformed API responses",
+            "Resolved authentication token refresh issues"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cl_3",
+      "date": "2024-10-10T00:00:00Z",
+      "version": "v2.0.0",
+      "changes": [
+        {
+          "category": "Breaking Changes",
+          "items": [
+            "Migrated to new API version 2.0",
+            "Updated minimum Node.js requirement to v18"
+          ]
+        },
+        {
+          "category": "Features",
+          "items": [
+            "Complete redesign of the user interface",
+            "Added support for multiple workspaces",
+            "Introduced new analytics dashboard"
+          ]
+        },
+        {
+          "category": "Improvements",
+          "items": [
+            "Enhanced error messages across the application",
+            "Improved documentation with interactive examples",
+            "Updated onboarding flow with guided tutorials"
+          ]
+        }
+      ]
+    }
+  ],
+  "hasMore": true
+}

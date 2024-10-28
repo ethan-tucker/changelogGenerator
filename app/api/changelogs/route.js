@@ -5,6 +5,7 @@ const BACKEND_URL = process.env.BACKEND_API_URL;
 export async function GET(request) {
   try {
     const searchParams = request.nextUrl.searchParams;
+    console.log(BACKEND_URL);
     const response = await fetch(`${BACKEND_URL}/api/changelogs?${searchParams}`);
     const data = await response.json();
 

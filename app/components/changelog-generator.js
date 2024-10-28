@@ -236,158 +236,167 @@ export default function ChangelogGenerator() {
 
   return (
     <>
-    <DevBanner />
-    <div className="max-w-4xl mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-8 pt-4">Changelog Generator</h1>
+      <DevBanner />
+      <div className="max-w-4xl mx-auto p-4">
+        <h1 className="text-3xl font-bold mb-8 pt-4">Changelog Generator</h1>
 
-      <Card className="mb-8">
-        <CardHeader>
-          <CardTitle>Configure Next Changelog Entry</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium mb-1">Version Number (optional)</label>
-                <input
-                  type="text"
-                  value={version}
-                  onChange={(e) => setVersion(e.target.value)}
-                  placeholder="e.g., v1.2.0"
-                  className="w-full border rounded p-2"
-                />
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle>Configure Next Changelog Entry</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-1">Version Number (optional)</label>
+                  <input
+                    type="text"
+                    value={version}
+                    onChange={(e) => setVersion(e.target.value)}
+                    placeholder="e.g., v1.2.0"
+                    className="w-full border rounded p-2"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Title (optional)</label>
+                  <input
+                    type="text"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    placeholder="e.g., Major Feature Release"
+                    className="w-full border rounded p-2"
+                  />
+                </div>
               </div>
-              <div>
-                <label className="block text-sm font-medium mb-1">Title (optional)</label>
-                <input
-                  type="text"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  placeholder="e.g., Major Feature Release"
-                  className="w-full border rounded p-2"
-                />
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-1">Start Date</label>
+                  <input
+                    type="date"
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                    className="w-full border rounded p-2"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">End Date</label>
+                  <input
+                    type="date"
+                    value={endDate}
+                    onChange={(e) => setEndDate(e.target.value)}
+                    className="w-full border rounded p-2"
+                  />
+                </div>
               </div>
+
+              <div className="space-y-2">
+                <button
+                  onClick={generateChangelog}
+                  disabled={isGenerating || !commits || commits.length === 0}
+                  className="w-full px-4 py-2 bg-blue-600 text-white rounded disabled:opacity-50 hover:bg-blue-700 transition-colors"
+                >
+                  {isGenerating ? 'Generating...' :
+                    !commits || commits.length === 0 ? 'No commits in selected date range' :
+                      'Generate Changelog'}
+                </button>
+                {(!commits || commits.length === 0) && !isGenerating && (
+                  <p className="text-sm text-red-500 text-center">
+                    Please select a date range that contains commits
+                  </p>
+                )}
+              </div>
+
+              {renderResult()}
             </div>
+          </CardContent>
+        </Card>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium mb-1">Start Date</label>
-                <input
-                  type="date"
-                  value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
-                  className="w-full border rounded p-2"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1">End Date</label>
-                <input
-                  type="date"
-                  value={endDate}
-                  onChange={(e) => setEndDate(e.target.value)}
-                  className="w-full border rounded p-2"
-                />
-              </div>
+        <div className="space-y-4">
+          <div className="flex justify-between items-center">
+            <h2 className="text-xl font-semibold">Commits Within Selected Time Frame</h2>
+          </div>
+
+          {isLoadingCommits ? (
+            <div className="flex justify-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
             </div>
-
-            <button
-              onClick={generateChangelog}
-              disabled={isGenerating}
-              className="w-full px-4 py-2 bg-blue-600 text-white rounded disabled:opacity-50 hover:bg-blue-700 transition-colors"
-            >
-              {isGenerating ? 'Generating...' : 'Generate Changelog'}
-            </button>
-
-            {renderResult()}
-          </div>
-        </CardContent>
-      </Card>
-
-      <div className="space-y-4">
-        <div className="flex justify-between items-center">
-          <h2 className="text-xl font-semibold">Commits Within Selected Time Frame</h2>
-        </div>
-
-        {isLoadingCommits ? (
-          <div className="flex justify-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-          </div>
-        ) : commits?.length === 0 ? (
-          <div className="text-center text-gray-500 py-8">
-            No commits found in the selected date range
-          </div>
-        ) : (
-          <Accordion type="single" collapsible className="space-y-2">
-            {commits?.map((commit) => (
-              <AccordionItem key={commit.sha} value={commit.sha}>
-                <AccordionTrigger className="hover:bg-gray-50 p-4 rounded">
-                  <div className="flex justify-between items-center w-full">
-                    <span className="font-medium">{commit.message.split('\n')[0]}</span>
-                    <span className="text-sm text-gray-500">
-                      {new Date(commit.date).toLocaleDateString()}
-                    </span>
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="p-4">
-                  <div className="space-y-2">
-                    <p className="text-sm text-gray-600">{commit.message}</p>
-                    <div className="text-sm">
-                      <span className="font-medium">Author:</span> {commit.author}
+          ) : commits?.length === 0 ? (
+            <div className="text-center text-gray-500 py-8">
+              No commits found in the selected date range
+            </div>
+          ) : (
+            <Accordion type="single" collapsible className="space-y-2">
+              {commits?.map((commit) => (
+                <AccordionItem key={commit.sha} value={commit.sha}>
+                  <AccordionTrigger className="hover:bg-gray-50 p-4 rounded">
+                    <div className="flex justify-between items-center w-full">
+                      <span className="font-medium">{commit.message.split('\n')[0]}</span>
+                      <span className="text-sm text-gray-500">
+                        {new Date(commit.date).toLocaleDateString()}
+                      </span>
                     </div>
-                    <div className="text-sm">
-                      <span className="font-medium">SHA:</span>{" "}
-                      <a
-                        href={commit.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-500 hover:text-blue-700 hover:underline inline-flex items-center gap-1"
-                      >
-                        {commit.sha.substring(0, 7)}
-                        <svg
-                          className="w-3 h-3"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
+                  </AccordionTrigger>
+                  <AccordionContent className="p-4">
+                    <div className="space-y-2">
+                      <p className="text-sm text-gray-600">{commit.message}</p>
+                      <div className="text-sm">
+                        <span className="font-medium">Author:</span> {commit.author}
+                      </div>
+                      <div className="text-sm">
+                        <span className="font-medium">SHA:</span>{" "}
+                        <a
+                          href={commit.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-500 hover:text-blue-700 hover:underline inline-flex items-center gap-1"
                         >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                          />
-                        </svg>
-                      </a>
+                          {commit.sha.substring(0, 7)}
+                          <svg
+                            className="w-3 h-3"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                            />
+                          </svg>
+                        </a>
+                      </div>
                     </div>
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
-        )}
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          )}
 
-        {commits?.length > 0 && (
-          <div className="flex justify-between items-center mt-4">
-            <button
-              onClick={() => setPage(p => Math.max(0, p - 1))}
-              disabled={page === 0}
-              className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50 hover:bg-gray-300 transition-colors"
-            >
-              Previous
-            </button>
-            <span className="text-sm text-gray-600">
-              Page {page + 1} of {totalPages}
-            </span>
-            <button
-              onClick={() => setPage(p => p + 1)}
-              disabled={page >= totalPages - 1}
-              className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50 hover:bg-gray-300 transition-colors"
-            >
-              Next
-            </button>
-          </div>
-        )}
+          {commits?.length > 0 && (
+            <div className="flex justify-between items-center mt-4">
+              <button
+                onClick={() => setPage(p => Math.max(0, p - 1))}
+                disabled={page === 0}
+                className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50 hover:bg-gray-300 transition-colors"
+              >
+                Previous
+              </button>
+              <span className="text-sm text-gray-600">
+                Page {page + 1} of {totalPages}
+              </span>
+              <button
+                onClick={() => setPage(p => p + 1)}
+                disabled={page >= totalPages - 1}
+                className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50 hover:bg-gray-300 transition-colors"
+              >
+                Next
+              </button>
+            </div>
+          )}
+        </div>
       </div>
-    </div>
     </>
   );
 }
